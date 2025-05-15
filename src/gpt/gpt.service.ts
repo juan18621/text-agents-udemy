@@ -1,0 +1,54 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { orthographyCheckUseCase, prosConsDiscusserStreamUseCase, prosConsDiscusserUseCase, audioToTextUseCase } from './use-cases';
+import { OrthographyDto, ProsConsDiscusserDto, TranslateTextDto } from './dtos';
+import OpenAI from 'openai';
+import { translateTextUseCase } from './use-cases/translate-text.use-case';
+import { textToAudioUseCase } from './use-cases/text-to-audio.use-case';
+import { TextToAudioDto } from './dtos/text-to-audio.dto';
+import path from 'path';
+import * as fs from 'fs';
+
+
+ @Injectable()
+export class GptService {
+
+
+    private openai: OpenAI = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY
+    });
+
+    //solo va a llamar casos de uso
+    async orthographyCheck(orthographyDto: OrthographyDto) {
+        return await orthographyCheckUseCase(this.openai, orthographyDto)
+    }
+
+    async prosConsDiscusser(prosConsDiscusserDto: ProsConsDiscusserDto) {
+        return await prosConsDiscusserUseCase(this.openai, prosConsDiscusserDto)
+    }
+
+    async prosConsDiscusserStream(prosConsDiscusserDto: ProsConsDiscusserDto) {
+        return await prosConsDiscusserStreamUseCase(this.openai, prosConsDiscusserDto)
+    }
+
+    async translateText(translateTextDto: TranslateTextDto) {
+        return await translateTextUseCase(this.openai, translateTextDto)
+    }
+
+    async textToAudio(textToAudioDto: TextToAudioDto) {
+        return await textToAudioUseCase(this.openai, textToAudioDto)
+    }
+
+    async getAudio(filename: string) {
+        const filePath = path.resolve(__dirname, '../../../generated/audios', `${filename}.mp3`);
+
+        if (!fs.existsSync(filePath)) {
+            throw new NotFoundException('Audio file not found');
+        }
+
+        return filePath;   
+    }
+
+    async audioToText(file: Express.Multer.File, prompt?: string) {
+        return await audioToTextUseCase(this.openai, { prompt, audioFile: file })
+    }
+}
