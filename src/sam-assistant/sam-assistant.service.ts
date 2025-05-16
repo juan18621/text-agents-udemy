@@ -19,7 +19,9 @@ export class SamAssistantService {
         
         const message = await createMessageUseCase(this.openai, { threadId, question });
 
-        const run = await createRunUseCase(this.openai, { threadId });
+        const assistantId = process.env.ASSISTANT_ID;
+
+        const run = await createRunUseCase(this.openai, { threadId, assistantId });
 
         await checkCompleteStatusUseCase(this.openai, { threadId, runId: run.id });
 

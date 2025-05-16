@@ -21,16 +21,17 @@ Sigue estos pasos para instalar y ejecutar el proyecto en modo de desarrollo:
    cp .env.template .env
    ```
 
-   Edita el archivo `.env` y proporciona tus valores:
+   Edita el archivo `.env` y proporciona tu api key de openAI y tu id de assistente que creaste en el playground para probar:
 
    ```env
-   OPENAI_API_KEY=tu_clave_de_api
+   OPENAI_API_KEY=api_key
    SERVER_URL=http://localhost:3000/
+   ASSISTANT_ID=assistant_id
    ```
 
 4. **Inicia el servidor de desarrollo:**
    ```bash
-   npm run dev
+   npm run start:dev
    ```
 
 ---
